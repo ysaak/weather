@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+body {
+    background-color: #1e2a31;
+    color: #9bbcd1;
+}
+
+.topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    padding: 1rem;
+
+    background-color: #22313a;
+}
+
+.topbar .brand {
+    display: block;
+
+    font-size: 1.8em;
+    color: #FFF;
+    text-decoration: none;
+
+    margin-right: 2rem;
+}
+
+.topbar .page-title {
+    font-size: 1.3em;
+}
+
+main {
+    margin: 2rem;
+}
+
+.sensor-card {
+    position: relative;
+
+    display: block;
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #2b3c46;
+    margin-bottom: 1em;
+}
+
+.sensor-card .card-title {
+    display: block;
+
+    font-size: 1.2em;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+
+    color: #FFF;
+    text-decoration: none;
+}
+
+.sensor-card a.card-title::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: auto;
+    content: "";
+    background-color: rgba(0,0,0,0);
+}
+
+.sensor-card .card-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sensor-card .icon-column {
+    padding-top: 1rem;
+}
+
+.sensor-card .icon-column img {
+    display: block;
+}
+
+.sensor-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sensor-card ul > li {
+    text-align: right;
+    font-size: 0.8em;
+}
+
+.sensor-card ul > li > span {
+    display: inline-block;
+    min-width: 3.5em;
+    font-size: 2em;
+}
+
+.sensor-card .update-time {
+    font-size: 0.6em;
+}

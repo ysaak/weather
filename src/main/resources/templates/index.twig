@@ -1,0 +1,30 @@
+{% extends "layout" %}
+
+{% block content %}
+<div class="grid-4-small-2 has-gutter">
+    {% for sensor in sensors %}
+    <div class="sensor-card">
+        <a href="/sensor/{{ sensor.code }}" class="card-title">{{ sensor.name }}</a>
+        <div class="card-body">
+            <div class="icon-column">
+                {% if sensor.unreachable %}
+                <img src="/static/img/unreachable.svg"  alt="Sensor unreachable" height="30px" width="30px" />
+                {% endif %}
+                {% if sensor.lowBattery %}
+                <img src="/static/img/low-battery.svg"  alt="Low battery" height="30px" width="30px" />
+                {% endif %}
+            </div>
+            {% if sensor.temperature is not null %}
+            <ul class="sensor-data">
+                <li>Temp&eacute;rature <span>{{ sensor.temperature }}&deg;C</span></li>
+                <li>Humidit&eacute; <span>{{ sensor.humidity }}%</span></li>
+            </ul>
+            {% endif %}
+        </div>
+        {% if sensor.temperature is not null %}
+        <div class="update-time">Mise &agrave; jour&nbsp;: {{ sensor.lastUpdateTime }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

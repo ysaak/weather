@@ -1,0 +1,114 @@
+{% extends "layout" %}
+
+{% block page_title %}
+<div class="page-title">{{ sensorName }}</div>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center">
+    <div style="width: 75%" class="sensor-card">
+        <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+</div>
+<script type="text/javascript" src="/static/js/moment.min.js"></script>
+<script type="text/javascript" src="/static/js/Chart.min.js"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    var ctx = document.getElementById('myChart');
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: 'Temperatures',
+                    yAxisID: 'temperature',
+                    borderColor: '#e53935',
+                    fill: false,
+                    data: [
+{% for temperature in temperatureData %} { x: moment.unix({{ temperature.time }}), y: {{ temperature.value }} }, {% endfor %}
+                    ]
+                },
+                {
+                    label: 'Humidité',
+                    yAxisID: 'humidity',
+                    borderColor: '#27a4fb',
+                    fill: false,
+                    data: [
+{% for temperature in humidityData %} { x: moment.unix({{ temperature.time }}), y: {{ temperature.value }} }, {% endfor %}
+                    ]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                labels: {
+                    fontColor: '#9bbcd1',
+                }
+            },
+            scales: {
+                xAxes: [
+                    {
+						type: 'time',
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Date'
+						},
+						time: {
+						    unit: 'hour',
+                            displayFormats: {
+                                hour: 'HH:mm'
+                            }
+                        },
+						ticks: {
+						    min: moment.unix({{ minDate }}),
+                            max: moment.unix({{ maxDate }}),
+                            fontColor: '#9bbcd1',
+
+                            major: {
+								fontStyle: 'bold',
+								fontColor: '#FF0000'
+							}
+						}
+					}
+                ],
+                yAxes: [
+                    {
+                        id: 'temperature',
+                        type: 'linear',
+                        position: 'left',
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Température',
+                            fontColor: '#9bbcd1',
+                        },
+                        ticks: {
+                            min: 0,
+                            fontColor: '#9bbcd1',
+                        }
+                    },
+                    {
+                        id: 'humidity',
+                        type: 'linear',
+                        position: 'right',
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Humidité',
+                            fontColor: '#9bbcd1',
+                        },
+                        ticks: {
+                            min: 0,
+                            max: 100,
+                            fontColor: '#9bbcd1',
+                        }
+                    }
+                ]
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
