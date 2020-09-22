@@ -1,7 +1,11 @@
 package ysaak.weather.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.convert.DurationUnit;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 @Configuration
 @ConfigurationProperties(prefix = "weather")
@@ -28,6 +32,8 @@ public class WeatherAppConfig {
     public static class XiaomiMijiaDataFetcherConfig {
         private String path;
         private boolean traceOutput;
+        @DurationUnit(ChronoUnit.SECONDS)
+        private Duration timeout;
 
         public String getPath() {
             return path;
@@ -43,6 +49,14 @@ public class WeatherAppConfig {
 
         public void setTraceOutput(boolean traceOutput) {
             this.traceOutput = traceOutput;
+        }
+
+        public Duration getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Duration timeout) {
+            this.timeout = timeout;
         }
     }
 }

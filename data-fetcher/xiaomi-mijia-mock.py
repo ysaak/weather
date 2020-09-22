@@ -1,7 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 
 import sys
 import random
+import time
 
 if len(sys.argv) != 3:
     print('E|Usage: {} --device mac_address'.format(sys.argv[0]))
@@ -13,6 +14,8 @@ print('T|MAC address {}'.format(mac_address))
 
 if mac_address.endswith('0'):
     print('N|Sensor unreachable')
+elif mac_address.endswith('2'):
+    time.sleep(30)
 else:
     print('D|temperature|{}'.format(random.uniform(10, 30)))
     print('D|humidity|{}'.format(random.uniform(30, 100)))

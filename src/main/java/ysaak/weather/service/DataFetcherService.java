@@ -25,14 +25,16 @@ public class DataFetcherService {
 
     private final Map<DeviceType, DataFetcher> dataFetcherMap;
 
+    private final ProcessExecutionService processExecutionService;
     private final SensorService sensorService;
 
     @Autowired
-    public DataFetcherService(SensorService sensorService, WeatherAppConfig weatherAppConfig) {
+    public DataFetcherService(SensorService sensorService, WeatherAppConfig weatherAppConfig, ProcessExecutionService processExecutionService) {
         this.sensorService = sensorService;
+        this.processExecutionService = processExecutionService;
 
         this.dataFetcherMap = new HashMap<>(1);
-        this.dataFetcherMap.put(DeviceType.XIAOMI_MIJIA, new XiaomiMijiaDataFetcher(weatherAppConfig.getXiaomiMijiaDataFetcher()));
+        this.dataFetcherMap.put(DeviceType.XIAOMI_MIJIA, new XiaomiMijiaDataFetcher(weatherAppConfig.getXiaomiMijiaDataFetcher(), processExecutionService));
     }
 
     public void fetchDataForAllSensors() {

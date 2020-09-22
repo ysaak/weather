@@ -2,14 +2,16 @@ package ysaak.weather.service.datafetcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ysaak.common.util.FileUtils;
 import ysaak.weather.config.WeatherAppConfig;
+import ysaak.weather.data.ProcessExecutionResult;
 import ysaak.weather.data.Sensor;
 import ysaak.weather.data.SensorData;
+import ysaak.weather.service.ProcessExecutionService;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class XiaomiMijiaDataFetcher implements DataFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(XiaomiMijiaDataFetcher.class);
@@ -24,34 +26,42 @@ public class XiaomiMijiaDataFetcher implements DataFetcher {
     private static final String XFD_DATA_KEY_BATTERY_LEVEL = "battery_level";
 
     private final WeatherAppConfig.XiaomiMijiaDataFetcherConfig fetcherConfig;
+    private final ProcessExecutionService processExecutionService;
 
-    public XiaomiMijiaDataFetcher(WeatherAppConfig.XiaomiMijiaDataFetcherConfig fetcherConfig) {
+    public XiaomiMijiaDataFetcher(WeatherAppConfig.XiaomiMijiaDataFetcherConfig fetcherConfig, ProcessExecutionService processExecutionService) {
         this.fetcherConfig = fetcherConfig;
+        this.processExecutionService = processExecutionService;
     }
 
     @Override
     public Optional<SensorData> fetchData(Sensor sensor) {
-        final FileUtils.FileExecResult result;
+        final ProcessExecutionResult result;
         SensorData data = null;
 
         // Read data using python script
         try {
-            result = FileUtils.execute(Arrays.asList(
+            result = processExecutionService.execute(Arrays.asList(
                     fetcherConfig.getPath(),
                     "--device",
                     sensor.getDeviceAddress()
-            ));
+            ), fetcherConfig.getTimeout(), fetcherConfig.isTraceOutput());
         }
-        catch (IOException | InterruptedException e) {
+        catch (IOException | InterruptedException | ExecutionException e) {
             LOGGER.error("Error while executing reading script for sensor " + sensor.getCode(), e);
             return Optional.empty();
         }
 
-        if (result.getExitVal() == 0) {
-            data = parseData(result.getOutput());
+        if (result.isProcessExited()) {
+            if (result.getExitVal() == 0) {
+                data = parseData(result.getOutput());
+            } else {
+                LOGGER.error("Error while reading data of sensor {}. Exit val: {} ; output: {}", sensor.getCode(), result.getExitVal(), result.getOutput());
+            }
         }
         else {
-            LOGGER.error("Error while reading data of sensor {}. Exit val: {} ; output: {}", sensor.getCode(), result.getExitVal(), result.getOutput());
+            LOGGER.error("Unable to connect to sensor. Execution trace: {}", result.getOutput());
+            data = new SensorData();
+            data.setReachable(false);
         }
 
         return Optional.ofNullable(data);
