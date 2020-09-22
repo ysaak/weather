@@ -12,6 +12,13 @@ public class DateUtils {
     }
 
     public static long toLocalTimestamp(LocalDateTime localDateTime) {
-        return localDateTime.atZone(ZoneId.of("Z")).withZoneSameInstant(ZoneId.systemDefault()).toEpochSecond();
+        return localDateTime.atZone(ZoneId.of("Z")).withZoneSameInstant(LOCAL_ZONE).toEpochSecond();
+    }
+
+    public static LocalDateTime toLocalDateTime(LocalDateTime localDateTime) {
+        return localDateTime
+                .atZone(ZoneId.of("Z"))
+                .withZoneSameInstant(LOCAL_ZONE)
+                .toLocalDateTime();
     }
 }
