@@ -1,68 +1,38 @@
-package ysaak.weather.config;
+package ysaak.weather.config.localaccess;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.springframework.stereotype.Component;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
-//@Component
-public class LocalRequestOriginatedFilter extends OncePerRequestFilter {
-    private static final Multimap<String, String> FILTERED_PATH_IP;
-    static {
-        FILTERED_PATH_IP = ArrayListMultimap.create(1, 2);
-        FILTERED_PATH_IP.putAll("/api/", Arrays.asList("192.168.1.0/24", "127.0.0.1/8", "::1"));
-    }
+@Aspect
+@Configuration
+public class LocalAccessAspect {
+    private static final List<String> LOCAL_SUBNETS = Arrays.asList("192.168.1.0/24", "127.0.0.1/8", "::1");
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        boolean accessForbidden = false;
-
-        for (String path : FILTERED_PATH_IP.keys()) {
-            if (shouldBlockRequest(request, path, FILTERED_PATH_IP.get(path))) {
-                accessForbidden = true;
-                break;
-            }
-        }
-
-        if (accessForbidden) {
-            response.setStatus(HttpURLConnection.HTTP_FORBIDDEN);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            PrintWriter writer = response.getWriter();
-            writer.print("{\"message\":\"This ip is forbidden\"}");
-        }
-        else {
-            filterChain.doFilter(request, response);
+    @Before("@annotation(ysaak.weather.config.localaccess.LocalAccess) && args(request,..)")
+    public void before(HttpServletRequest request) {
+        if (shouldBlockRequest(request)) {
+            throw new RuntimeException("Local access only");
         }
     }
 
-    private boolean shouldBlockRequest(HttpServletRequest request, String path, Collection<String> subnets) {
-        if (request.getRequestURI().startsWith(path)) {
-            for (String subnet : subnets) {
-                IpAddressMatcher ipAddressMatcher = new IpAddressMatcher(subnet);
-                if (ipAddressMatcher.matches(request)) {
-                    return false;
-                }
+    private boolean shouldBlockRequest(HttpServletRequest request) {
+        for (String subnet : LOCAL_SUBNETS) {
+            LocalAccessAspect.IpAddressMatcher ipAddressMatcher = new LocalAccessAspect.IpAddressMatcher(subnet);
+            if (ipAddressMatcher.matches(request)) {
+                return false;
             }
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 
     private static final class IpAddressMatcher {

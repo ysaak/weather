@@ -1,7 +1,6 @@
 package ysaak.weather.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ysaak.common.exception.FunctionalException;
@@ -90,7 +89,11 @@ public class SensorService {
 
         SensorData savedSensorData = sensorDataRepository.save(sensorData);
 
-        sensor.setLastData(savedSensorData);
+        if (sensorData.isReachable()) {
+            sensor.setLastData(savedSensorData);
+        }
+        sensor.setUnreachableWarning(!sensorData.isReachable());
+
         if (sensor.isOnBattery() && sensorData.getBatteryVoltage() != null) {
             sensor.setLastBatteryValue(sensorData.getBatteryVoltage());
             sensor.setBatteryWarning(SensorRules.isBatteryLow(sensor, sensorData));

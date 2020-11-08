@@ -56,6 +56,9 @@ public class Sensor {
     @Column(name = "SENS_BATTERY_WARNING")
     private boolean batteryWarning;
 
+    @Column(name = "SENS_UNREACHABLE_WARNING")
+    private boolean unreachableWarning;
+
     public String getId() {
         return id;
     }
@@ -158,5 +161,13 @@ public class Sensor {
 
     public void setBatteryWarning(boolean batteryWarning) {
         this.batteryWarning = batteryWarning;
+    }
+
+    public boolean isUnreachableWarning() {
+        return unreachableWarning;
+    }
+
+    public void setUnreachableWarning(boolean unreachableWarning) {
+        this.unreachableWarning = unreachableWarning;
     }
 }

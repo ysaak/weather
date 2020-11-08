@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 body {
-    background-color: #1e2a31;
-    color: #9bbcd1;
+    background-color: #2A3D4C /* #2A3D4C /* #1e2a31*/;
+    color: rgba(255, 255, 255, 0.60) /*#9bbcd1*/;
 }
 
 .topbar {
@@ -12,14 +12,14 @@ body {
 
     padding: 1rem;
 
-    background-color: #22313a;
+    background-color: #0F0F10 /*#22313a*/;
 }
 
 .topbar .brand {
     display: block;
 
     font-size: 1.8em;
-    color: #FFF;
+    color: rgba(255, 255, 255, 0.87);
     text-decoration: none;
 
     margin-right: 2rem;
@@ -39,7 +39,7 @@ main {
     display: block;
     border-radius: 10px;
     padding: 1rem;
-    background-color: #2b3c46;
+    background-color: #212228 /*#2b3c46*/;
     margin-bottom: 1em;
 }
 
@@ -47,10 +47,10 @@ main {
     display: block;
 
     font-size: 1.2em;
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    /*font-weight: bold;*/
+    /*border-bottom: 1px solid #ddd;*/
 
-    color: #FFF;
+    color: rgba(255, 255, 255, 0.60);
     text-decoration: none;
 }
 
@@ -95,8 +95,10 @@ main {
     display: inline-block;
     min-width: 3.5em;
     font-size: 2em;
+    color: rgba(255, 255, 255, 0.87);
 }
 
 .sensor-card .update-time {
     font-size: 0.6em;
+    color: rgba(255, 255, 255, 0.38);
 }

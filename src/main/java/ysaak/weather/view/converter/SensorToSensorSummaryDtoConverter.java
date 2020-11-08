@@ -4,6 +4,7 @@ package ysaak.weather.view.converter;
 import org.springframework.stereotype.Component;
 import ysaak.common.converter.AbstractConverter;
 import ysaak.common.util.DateUtils;
+import ysaak.common.util.MathUtils;
 import ysaak.weather.data.Sensor;
 import ysaak.weather.data.SensorData;
 import ysaak.weather.view.dto.SensorSummaryDto;
@@ -19,16 +20,14 @@ public class SensorToSensorSummaryDtoConverter extends AbstractConverter<Sensor,
         Double temperature = null;
         Double humidity = null;
         String lastUpdateTime = null;
-        boolean unreachable = false;
 
         if (object.getLastData() != null) {
             SensorData sensorData = object.getLastData();
-            temperature = sensorData.getTemperature();
-            humidity = sensorData.getHumidity();
+            temperature = MathUtils.nullSafeRound(sensorData.getTemperature(), 1);
+            humidity = MathUtils.nullSafeRound(sensorData.getHumidity(), 0);
             lastUpdateTime = LAST_UPDATE_TIME_FORMATTER.format(
                     DateUtils.toLocalDateTime(object.getLastData().getReceptionTime())
             );
-            unreachable = !sensorData.isReachable();
         }
 
         return new SensorSummaryDto(
@@ -38,7 +37,7 @@ public class SensorToSensorSummaryDtoConverter extends AbstractConverter<Sensor,
                 humidity,
                 lastUpdateTime,
                 object.isBatteryWarning(),
-                unreachable
+                object.isUnreachableWarning()
         );
     }
 }

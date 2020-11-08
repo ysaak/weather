@@ -16,8 +16,8 @@
             </div>
             {% if sensor.temperature is not null %}
             <ul class="sensor-data">
-                <li>Temp&eacute;rature <span>{{ sensor.temperature }}&deg;C</span></li>
-                <li>Humidit&eacute; <span>{{ sensor.humidity }}%</span></li>
+                <li>Temp&eacute;rature <span>{{ sensor.temperature  | numberformat("##.#") }}&deg;C</span></li>
+                <li>Humidit&eacute; <span>{{ sensor.humidity | numberformat("##") }}%</span></li>
             </ul>
             {% endif %}
         </div>
